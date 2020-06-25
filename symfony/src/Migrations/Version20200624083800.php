@@ -22,7 +22,7 @@ final class Version20200624083800 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE UNIQUE INDEX share_unique ON share_note_to_user (note_id, user_id)');
+        $this->addSql('CREATE UNIQUE INDEX share_unique ON share_contact_to_user (contact_id, user_id)');
     }
 
     public function down(Schema $schema) : void
@@ -30,6 +30,6 @@ final class Version20200624083800 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP INDEX share_unique ON share_note_to_user');
+        $this->addSql('DROP INDEX share_unique ON share_contact_to_user');
     }
 }

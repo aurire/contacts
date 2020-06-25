@@ -1,6 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
-import {Link, withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import {fetchSharedForUser, setAlert} from "../../../../actions";
 import ListGroup from "react-bootstrap/ListGroup";
 
@@ -16,7 +16,7 @@ const mapStateToProps = (state) => {
 };
 
 
-class NotesSharedWithMe extends React.Component {
+class ContactsSharedWithMe extends React.Component {
     componentDidMount() {
         let user = this.props.user;
         if (null === user) {
@@ -25,13 +25,15 @@ class NotesSharedWithMe extends React.Component {
         this.props.fetchSharedForUser(user, 1);
     }
 
-    getNotes() {
+    getContacts() {
         if (this.props.shared[this.props.match.params.id]) {
-            let notes = this.props.shared[this.props.match.params.id]['hydra:member'];
+            let contacts = this.props.shared[this.props.match.params.id]['hydra:member'];
 
-            const listItems = notes.map((note) =>
-                <ListGroup.Item key={note['note']['@id']}>
-                    <h5>{note['noteOwner']}<span> </span>
+            console.log(contacts);
+
+            const listItems = contacts.map((contact) =>
+                <ListGroup.Item key={contact['contact']['@id']}>
+                    <h5>{contact['contactOwner']}<span> </span>
                         <span style={{fontWeight: "normal", fontSize: "small"}}>{
                             new Intl.DateTimeFormat(
                                 "en-GB",
@@ -43,11 +45,11 @@ class NotesSharedWithMe extends React.Component {
                                     minute: 'numeric',
                                     second: 'numeric'
                                 }
-                            ).format(new Date(note['note']['createdAt']))
+                            ).format(new Date(contact['contact']['createdAt']))
                         }</span>
                     </h5>
-                    <p><b>{note['note']['title']}</b></p>
-                    <p>{note['note']['message']}</p>
+                    <p><b>{contact['contact']['name']}</b></p>
+                    <p>{contact['contact']['phone']}</p>
                 </ListGroup.Item>
             );
 
@@ -68,13 +70,13 @@ class NotesSharedWithMe extends React.Component {
     render() {
         return (
             <div>
-                <h1>Notes shared with me</h1>
-                {this.getNotes()}
+                <h1>Contacts shared with me</h1>
+                {this.getContacts()}
                 {this.getPager()}
             </div>
         );
     }
 }
 
-const ConnectedNotesSharedWithMe = connect(mapStateToProps, mapDispatchToProps)(NotesSharedWithMe);
-export default withRouter(ConnectedNotesSharedWithMe);
+const ConnectedContactsSharedWithMe = connect(mapStateToProps, mapDispatchToProps)(ContactsSharedWithMe);
+export default withRouter(ConnectedContactsSharedWithMe);

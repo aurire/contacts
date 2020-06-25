@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\ShareNoteToUserRepository;
+use App\Repository\ShareContactToUserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -37,16 +37,16 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *     denormalizationContext={"groups"={"share:write"}}
  * )
  * @ORM\Table(
- *    name="share_note_to_user",
+ *    name="share_contact_to_user",
  *    uniqueConstraints={
- *        @ORM\UniqueConstraint(name="share_unique", columns={"note_id", "user_id"})
+ *        @ORM\UniqueConstraint(name="share_unique", columns={"contact_id", "user_id"})
  *    }
  * )
- * @UniqueEntity(fields={"note", "user"}, message="This note is already shared with this user")
- * @ORM\Entity(repositoryClass=ShareNoteToUserRepository::class)
+ * @UniqueEntity(fields={"contact", "user"}, message="This contact is already shared with this user")
+ * @ORM\Entity(repositoryClass=ShareContactToUserRepository::class)
  * @ApiFilter(SearchFilter::class, properties={"user": "exact"})
  */
-class ShareNoteToUser
+class ShareContactToUser
 {
     /**
      * @ORM\Id()
@@ -56,14 +56,14 @@ class ShareNoteToUser
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Note::class, inversedBy="user")
+     * @ORM\ManyToOne(targetEntity=Contact::class, inversedBy="user")
      * @Groups({"share:write"})
      * @ORM\JoinColumn(nullable=false)
      */
-    private $note;
+    private $contact;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="sharedNotes")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="sharedContacts")
      * @Groups({"share:read", "share:write"})
      * @ORM\JoinColumn(nullable=false)
      */
@@ -74,20 +74,20 @@ class ShareNoteToUser
         return $this->id;
     }
 
-    public function getNote(): ?Note
+    public function getContact(): ?Contact
     {
-        return $this->note;
+        return $this->contact;
     }
 
-    public function setNote(?Note $note): self
+    public function setContact(?Contact $contact): self
     {
-        $this->note = $note;
+        $this->contact = $contact;
 
         return $this;
     }
 
     /**
-     * @Groups({"notes:item:get"})
+     * @Groups({"contacts:item:get"})
      */
     public function getUser(): ?User
     {
@@ -103,19 +103,19 @@ class ShareNoteToUser
 
     /**
      * @Groups({"user:item:get", "share:read"})
-     * @SerializedName("note")
+     * @SerializedName("contact")
      */
-    public function getNoteForUser()
+    public function getContactForUser()
     {
-        return $this->note;
+        return $this->contact;
     }
 
     /**
      * @Groups({"user:item:get", "share:read"})
-     * @SerializedName("noteOwner")
+     * @SerializedName("contactOwner")
      */
-    public function getNoteOwnerMail()
+    public function getContactOwnerMail()
     {
-        return $this->note->getOwner()->getEmail();
+        return $this->contact->getOwner()->getEmail();
     }
 }

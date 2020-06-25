@@ -1,7 +1,7 @@
 import React from "react";
 import {withRouter} from "react-router";
 import {connect} from "react-redux";
-import {initiateNoteCreate, setAlert, fetchNote, initiateNoteEdit, deleteShare} from "../../../../actions";
+import {initiateContactCreate, setAlert, fetchContact, initiateContactEdit, deleteShare} from "../../../../actions";
 import {Link} from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -12,10 +12,10 @@ const EDIT = 'Edit';
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        initiateNoteCreate: (ownerId, title, message) => dispatch(initiateNoteCreate(ownerId, title, message)),
-        initiateNoteEdit: (ownerId, id, title, message) => dispatch(initiateNoteEdit(ownerId, id, title, message)),
+        initiateContactCreate: (ownerId, name, phone) => dispatch(initiateContactCreate(ownerId, name, phone)),
+        initiateContactEdit: (ownerId, id, name, phone) => dispatch(initiateContactEdit(ownerId, id, name, phone)),
         deleteShare: (id) => dispatch(deleteShare(id)),
-        fetchNote: (id) => dispatch(fetchNote(id)),
+        fetchContact: (id) => dispatch(fetchContact(id)),
         setAlert: (msg) => dispatch(setAlert(msg))
     };
 };
@@ -24,14 +24,14 @@ const mapStateToProps = (state) => {
     return {...state};
 };
 
-class NotesCreateEdit extends React.Component {
+class ContactsCreateEdit extends React.Component {
     _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            message: '',
-            noteShares: null,
+            name: '',
+            phone: '',
+            contactShares: null,
             error: null,
             refreshing: false
         };
@@ -48,17 +48,17 @@ class NotesCreateEdit extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         if (CREATE === this.getCreateOrEdit()) {
-            this.props.initiateNoteCreate(
+            this.props.initiateContactCreate(
                 this.props.user.split('/').pop(),
-                this.state.title,
-                this.state.message
+                this.state.name,
+                this.state.phone
             );
         } else {
-            this.props.initiateNoteEdit(
+            this.props.initiateContactEdit(
                 this.props.user.split('/').pop(),
-                this.getNoteId(),
-                this.state.title,
-                this.state.message
+                this.getContactId(),
+                this.state.name,
+                this.state.phone
             );
         }
     }
@@ -72,7 +72,7 @@ class NotesCreateEdit extends React.Component {
 
         return CREATE;
     }
-    getNoteId() {
+    getContactId() {
         if (this.props.match.params.id) {
             return this.props.match.params.id;
         }
@@ -83,20 +83,20 @@ class NotesCreateEdit extends React.Component {
         if (true === this.props.loaded) {
             if (true === this.props.mainActionFinished) {
                 const msg = this.getCreateOrEdit() === CREATE
-                    ? 'Succesfuly created Note'
-                    : 'Succesfuly updated Note';
+                    ? 'Succesfuly created Contact'
+                    : 'Succesfuly updated Contact';
                 this.props.setAlert(msg);
-                this.props.history.push('/user/');
+                this.props.history.push('/user/contacts/list/1');
             } else if (true === this.props.dataFetchFinished) {
-                const thisNote = this.props.note[this.getNoteId()];
-                if (thisNote && this.state.refreshing) {
+                const thisContact = this.props.contact[this.getContactId()];
+                if (thisContact && this.state.refreshing) {
                     this.setState(
                         {
                             ...this.state,
                             refreshing: false,
-                            title: thisNote.title,
-                            message: thisNote.message,
-                            noteShares: thisNote.noteShares
+                            name: thisContact.name,
+                            phone: thisContact.phone,
+                            contactShares: thisContact.contactShares
                         }
                     );
                 }
@@ -107,18 +107,18 @@ class NotesCreateEdit extends React.Component {
     componentDidMount() {
         this._isMounted = true;
         if (EDIT === this.getCreateOrEdit()) {
-            const nid = this.getNoteId();
+            const nid = this.getContactId();
             if (nid !== 'create') {
                 this.setState({...this.setState, refreshing: true})
-                this.props.fetchNote(nid);
+                this.props.fetchContact(nid);
             }
         }
         this.props.history.listen((location) => {
             if (location.pathname.split('/').pop() === 'create') {
                 if (this._isMounted) {
                     this.setState({
-                        title: '',
-                        message: '',
+                        name: '',
+                        phone: '',
                         error: null,
                         refreshing: false
                     });
@@ -133,39 +133,39 @@ class NotesCreateEdit extends React.Component {
     getForm() {
         const error = '';
         if (this.state.refreshing) {
-            return <div>Refreshing Note data for editing</div>
+            return <div>Refreshing Contact data for editing</div>
         }
 
         return <Form>
             <Form.Group>
-                <Form.Label>Title</Form.Label>
-                <Form.Control onChange={this.handleChange} value={this.state.title} type="text" placeholder="Enter title" name="title" id="title" />
+                <Form.Label>Name</Form.Label>
+                <Form.Control onChange={this.handleChange} value={this.state.name} type="text" placeholder="Enter name" name="name" id="name" />
                 <Form.Text className="text-muted">
-                    The title for your note
+                    Your contact name
                 </Form.Text>
             </Form.Group>
             <Form.Group>
-                <Form.Label>Message</Form.Label>
-                <Form.Control onChange={this.handleChange} value={this.state.message} type="text" placeholder="Note contents" name="message" id="message" />
+                <Form.Label>Phone</Form.Label>
+                <Form.Control onChange={this.handleChange} value={this.state.phone} type="text" placeholder="Contact phone" name="phone" id="phone" />
                 <Form.Text className="text-muted">
-                    Enter your note contents
+                    Contact phone number
                 </Form.Text>
             </Form.Group>
-            <Button variant="primary" onClick={this.handleSubmit} type="submit">{this.getCreateOrEdit() + " Note"}</Button>
+            <Button variant="primary" onClick={this.handleSubmit} type="submit">{this.getCreateOrEdit() + " Contact"}</Button>
             {error}
         </Form>;
     }
-    getNoteShares() {
-        if (null === this.state.noteShares) {
+    getContactShares() {
+        if (null === this.state.contactShares) {
             return '';
         }
-        const items = this.state.noteShares.map((noteShare) =>
-            <ListGroup.Item key={noteShare['@id']}>
-                {noteShare['user']['email']}<span> </span>
+        const items = this.state.contactShares.map((contactShare) =>
+            <ListGroup.Item key={contactShare['@id']}>
+                {contactShare['user']['email']}<span> </span>
                 {
-                    this.props.deleted.hasOwnProperty(noteShare['@id'].split('/').pop())
+                    this.props.deleted.hasOwnProperty(contactShare['@id'].split('/').pop())
                     ? ' - Sharing removed '
-                    : <Button variant="outline-danger" onClick={this.handleDelete} className="share-delete" data-id={noteShare['@id']}>
+                    : <Button variant="outline-danger" onClick={this.handleDelete} className="share-delete" data-id={contactShare['@id']}>
                         Remove sharing</Button>
                 }
             </ListGroup.Item>
@@ -183,20 +183,20 @@ class NotesCreateEdit extends React.Component {
     render() {
 
         const shareThis = EDIT === this.getCreateOrEdit()
-            ? <Link to={"/user/notes/share/" + this.props.match.params.id}>Share this note</Link>
+            ? <Link to={"/user/contacts/share/" + this.props.match.params.id}>Share this contact</Link>
             : ''
         ;
 
         return (
             <div>
-                <h1>{this.getCreateOrEdit()} Note</h1>
+                <h1>{this.getCreateOrEdit()} Contact</h1>
                 {this.getForm()}
-                {this.getNoteShares()}
+                {this.getContactShares()}
                 {shareThis}
             </div>
         );
     }
 }
 
-const connectedNotesCreateEdit = connect(mapStateToProps, mapDispatchToProps)(NotesCreateEdit);
-export default withRouter(connectedNotesCreateEdit);
+const connectedContactsCreateEdit = connect(mapStateToProps, mapDispatchToProps)(ContactsCreateEdit);
+export default withRouter(connectedContactsCreateEdit);

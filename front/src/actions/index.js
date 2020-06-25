@@ -11,30 +11,30 @@ import {
     INITIATE_REGISTER_FAILURE,
     LOCATION_CHANGED,
     SET_ALERT,
-    INITIATE_NOTE_CREATE_STARTED,
-    INITIATE_NOTE_CREATE_FAILURE,
-    INITIATE_NOTE_CREATE_SUCCESS,
-    FETCH_NOTE_LIST_STARTED,
-    FETCH_NOTE_LIST_FAILURE,
-    FETCH_NOTE_LIST_SUCCESS,
-    FETCH_NOTE_FAILURE,
-    FETCH_NOTE_STARTED,
-    FETCH_NOTE_SUCCESS,
-    INITIATE_NOTE_EDIT_FAILURE,
-    INITIATE_NOTE_EDIT_STARTED,
-    INITIATE_NOTE_EDIT_SUCCESS,
-    INITIATE_NOTE_SHARE_FAILURE,
-    INITIATE_NOTE_SHARE_STARTED,
-    INITIATE_NOTE_SHARE_SUCCESS,
+    INITIATE_CONTACT_CREATE_STARTED,
+    INITIATE_CONTACT_CREATE_FAILURE,
+    INITIATE_CONTACT_CREATE_SUCCESS,
+    FETCH_CONTACT_LIST_STARTED,
+    FETCH_CONTACT_LIST_FAILURE,
+    FETCH_CONTACT_LIST_SUCCESS,
+    FETCH_CONTACT_FAILURE,
+    FETCH_CONTACT_STARTED,
+    FETCH_CONTACT_SUCCESS,
+    INITIATE_CONTACT_EDIT_FAILURE,
+    INITIATE_CONTACT_EDIT_STARTED,
+    INITIATE_CONTACT_EDIT_SUCCESS,
+    INITIATE_CONTACT_SHARE_FAILURE,
+    INITIATE_CONTACT_SHARE_STARTED,
+    INITIATE_CONTACT_SHARE_SUCCESS,
     FETCH_SHARED_FOR_USER_FAILURE,
     FETCH_SHARED_FOR_USER_STARTED,
     FETCH_SHARED_FOR_USER_SUCCESS,
     DELETE_SHARE_FAILURE,
     DELETE_SHARE_STARTED,
     DELETE_SHARE_SUCCESS,
-    DELETE_NOTE_FAILURE,
-    DELETE_NOTE_STARTED,
-    DELETE_NOTE_SUCCESS,
+    DELETE_CONTACT_FAILURE,
+    DELETE_CONTACT_STARTED,
+    DELETE_CONTACT_SUCCESS,
     INITIATE_USER_UPDATE_STARTED,
     INITIATE_USER_UPDATE_FAILURE,
     INITIATE_USER_UPDATE_SUCCESS,
@@ -215,216 +215,216 @@ export const setAlert = (msg) => {
     };
 };
 
-//initiateNoteCreate
-export const initiateNoteCreate = (ownerId, title, message) => {
+//initiateContactCreate
+export const initiateContactCreate = (ownerId, name, phone) => {
     return dispatch => {
-        dispatch(initiateNoteCreateStarted());
+        dispatch(initiateContactCreateStarted());
 
         axios
-            .post(HOST + "api/notes", {
-                "title": title,
-                "message": message,
+            .post(HOST + "api/contacts", {
+                "name": name,
+                "phone": phone,
                 "isPublic": true,
                 "owner": "/api/users/" + ownerId
             }, {withCredentials: true})
             .then(res => {
-                dispatch(initiateNoteCreateSuccess(res));
+                dispatch(initiateContactCreateSuccess(res));
             })
             .catch(err => {
-                dispatch(initiateNoteCreateFailed(err));
+                dispatch(initiateContactCreateFailed(err));
             });
     };
 };
-const initiateNoteCreateStarted = () => {
+const initiateContactCreateStarted = () => {
     return {
-        type: INITIATE_NOTE_CREATE_STARTED,
+        type: INITIATE_CONTACT_CREATE_STARTED,
         payload: {
             isLoading: true
         }
     };
 };
-const initiateNoteCreateSuccess = payload => {
+const initiateContactCreateSuccess = payload => {
     return {
-        type: INITIATE_NOTE_CREATE_SUCCESS,
+        type: INITIATE_CONTACT_CREATE_SUCCESS,
         payload: {
             payload
         }
     };
 };
-const initiateNoteCreateFailed = error => {
+const initiateContactCreateFailed = error => {
     return {
-        type: INITIATE_NOTE_CREATE_FAILURE,
+        type: INITIATE_CONTACT_CREATE_FAILURE,
         payload: {
             error
         }
     };
 };
 
-//fetchNotesList
-export const fetchNotesList = (owner, page) => {
+//fetchContactList
+export const fetchContactList = (owner, page) => {
     return dispatch => {
-        dispatch(fetchNoteListStarted());
+        dispatch(fetchContactListStarted());
 
         axios
-            .get(HOST + "api/notes?owner=" + owner
+            .get(HOST + "api/contacts?owner=" + owner
                 + "&page=" + page, {withCredentials: true})
             .then(res => {
-                dispatch(fetchNoteListSuccess(res, page));
+                dispatch(fetchContactListSuccess(res, page));
             })
             .catch(err => {
-                dispatch(fetchNoteListFailed(err));
+                dispatch(fetchContactListFailed(err));
             });
     };
 };
-const fetchNoteListStarted = () => {
+const fetchContactListStarted = () => {
     return {
-        type: FETCH_NOTE_LIST_STARTED,
+        type: FETCH_CONTACT_LIST_STARTED,
         payload: {
             isLoading: true
         }
     };
 };
-const fetchNoteListSuccess = (payload, page) => {
+const fetchContactListSuccess = (payload, page) => {
     return {
-        type: FETCH_NOTE_LIST_SUCCESS,
+        type: FETCH_CONTACT_LIST_SUCCESS,
         payload: {
             items: payload,
             page: page
         }
     };
 };
-const fetchNoteListFailed = error => {
+const fetchContactListFailed = error => {
     return {
-        type: FETCH_NOTE_LIST_FAILURE,
+        type: FETCH_CONTACT_LIST_FAILURE,
         payload: {
             error
         }
     };
 };
 
-//fetchNote
-export const fetchNote = (id) => {
+//fetchContact
+export const fetchContact = (id) => {
     return dispatch => {
-        dispatch(fetchNoteStarted());
+        dispatch(fetchContactStarted());
 
         axios
-            .get(HOST + "api/notes/" + id, {withCredentials: true})
+            .get(HOST + "api/contacts/" + id, {withCredentials: true})
             .then(res => {
-                dispatch(fetchNoteSuccess(res, id));
+                dispatch(fetchContactSuccess(res, id));
             })
             .catch(err => {
-                dispatch(fetchNoteFailed(err));
+                dispatch(fetchContactFailed(err));
             });
     };
 };
-const fetchNoteStarted = () => {
+const fetchContactStarted = () => {
     return {
-        type: FETCH_NOTE_STARTED,
+        type: FETCH_CONTACT_STARTED,
         payload: {
             isLoading: true
         }
     };
 };
-const fetchNoteSuccess = (payload, id) => {
+const fetchContactSuccess = (payload, id) => {
     return {
-        type: FETCH_NOTE_SUCCESS,
+        type: FETCH_CONTACT_SUCCESS,
         payload: {
             item: payload,
             id: id
         }
     };
 };
-const fetchNoteFailed = error => {
+const fetchContactFailed = error => {
     return {
-        type: FETCH_NOTE_FAILURE,
+        type: FETCH_CONTACT_FAILURE,
         payload: {
             error
         }
     };
 };
 
-//initiateNoteEdit
-export const initiateNoteEdit = (ownerId, id, title, message) => {
+//initiateContactEdit
+export const initiateContactEdit = (ownerId, id, name, phone) => {
     return dispatch => {
-        dispatch(initiateNoteEditStarted());
+        dispatch(initiateContactEditStarted());
 
         axios
-            .put(HOST + "api/notes/" + id, {
-                "title": title,
-                "message": message,
+            .put(HOST + "api/contacts/" + id, {
+                "name": name,
+                "phone": phone,
                 "isPublic": true,
                 "owner": "/api/users/" + ownerId
             }, {withCredentials: true})
             .then(res => {
-                dispatch(initiateNoteEditSuccess(res));
+                dispatch(initiateContactEditSuccess(res));
             })
             .catch(err => {
-                dispatch(initiateNoteEditFailed(err));
+                dispatch(initiateContactEditFailed(err));
             });
     };
 };
-const initiateNoteEditStarted = () => {
+const initiateContactEditStarted = () => {
     return {
-        type: INITIATE_NOTE_EDIT_STARTED,
+        type: INITIATE_CONTACT_EDIT_STARTED,
         payload: {
             isLoading: true
         }
     };
 };
-const initiateNoteEditSuccess = payload => {
+const initiateContactEditSuccess = payload => {
     return {
-        type: INITIATE_NOTE_EDIT_SUCCESS,
+        type: INITIATE_CONTACT_EDIT_SUCCESS,
         payload: {
             payload
         }
     };
 };
-const initiateNoteEditFailed = error => {
+const initiateContactEditFailed = error => {
     return {
-        type: INITIATE_NOTE_EDIT_FAILURE,
+        type: INITIATE_CONTACT_EDIT_FAILURE,
         payload: {
             error
         }
     };
 };
 
-//initiateNoteShare
-export const initiateNoteShare = (note, user) => {
+//initiateContactShare
+export const initiateContactShare = (contact, user) => {
     return dispatch => {
-        dispatch(initiateNoteShareStarted());
+        dispatch(initiateContactShareStarted());
 
         axios
-            .post(HOST + "api/share_note_to_users", {
-                "note": note,
+            .post(HOST + "api/share_contact_to_users", {
+                "contact": contact,
                 "user": user
             }, {withCredentials: true})
             .then(res => {
-                dispatch(initiateNoteShareSuccess(res));
+                dispatch(initiateContactShareSuccess(res));
             })
             .catch(err => {
-                dispatch(initiateNoteShareFailed(err));
+                dispatch(initiateContactShareFailed(err));
             });
     };
 };
-const initiateNoteShareStarted = () => {
+const initiateContactShareStarted = () => {
     return {
-        type: INITIATE_NOTE_SHARE_STARTED,
+        type: INITIATE_CONTACT_SHARE_STARTED,
         payload: {
             isLoading: true
         }
     };
 };
-const initiateNoteShareSuccess = payload => {
+const initiateContactShareSuccess = payload => {
     return {
-        type: INITIATE_NOTE_SHARE_SUCCESS,
+        type: INITIATE_CONTACT_SHARE_SUCCESS,
         payload: {
             payload
         }
     };
 };
-const initiateNoteShareFailed = error => {
+const initiateContactShareFailed = error => {
     return {
-        type: INITIATE_NOTE_SHARE_FAILURE,
+        type: INITIATE_CONTACT_SHARE_FAILURE,
         payload: {
             error
         }
@@ -438,7 +438,7 @@ export const fetchSharedForUser = (id, page) => {
 
         axios
             .get(
-                HOST + "api/share_note_to_users?user=" + id + "&page=" + page,
+                HOST + "api/share_contact_to_users?user=" + id + "&page=" + page,
                 {withCredentials: true}
                 )
             .then(res => {
@@ -482,7 +482,7 @@ export const deleteShare = (id) => {
 
         axios
             .delete(
-                HOST + "api/share_note_to_users/" + id,
+                HOST + "api/share_contact_to_users/" + id,
                 {withCredentials: true}
             )
             .then(res => {
@@ -518,43 +518,43 @@ const deleteShareFailed = error => {
     };
 };
 
-//deleteNote
-export const deleteNote = (id) => {
+//deleteContact
+export const deleteContact = (id) => {
     return dispatch => {
-        dispatch(deleteNoteStarted());
+        dispatch(deleteContactStarted());
 
         axios
             .delete(
-                HOST + "api/notes/" + id,
+                HOST + "api/contacts/" + id,
                 {withCredentials: true}
             )
             .then(res => {
-                dispatch(deleteNoteSuccess(id));
+                dispatch(deleteContactSuccess(id));
             })
             .catch(err => {
-                dispatch(deleteNoteFailed(err));
+                dispatch(deleteContactFailed(err));
             });
     };
 };
-const deleteNoteStarted = () => {
+const deleteContactStarted = () => {
     return {
-        type: DELETE_NOTE_STARTED,
+        type: DELETE_CONTACT_STARTED,
         payload: {
             isLoading: true
         }
     };
 };
-const deleteNoteSuccess = (id) => {
+const deleteContactSuccess = (id) => {
     return {
-        type: DELETE_NOTE_SUCCESS,
+        type: DELETE_CONTACT_SUCCESS,
         payload: {
             id: id
         }
     };
 };
-const deleteNoteFailed = error => {
+const deleteContactFailed = error => {
     return {
-        type: DELETE_NOTE_FAILURE,
+        type: DELETE_CONTACT_FAILURE,
         payload: {
             error
         }

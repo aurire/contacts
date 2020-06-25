@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\ShareNoteToUser;
+use App\Entity\ShareContactToUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method ShareNoteToUser|null find($id, $lockMode = null, $lockVersion = null)
- * @method ShareNoteToUser|null findOneBy(array $criteria, array $orderBy = null)
- * @method ShareNoteToUser[]    findAll()
- * @method ShareNoteToUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method ShareContactToUser|null find($id, $lockMode = null, $lockVersion = null)
+ * @method ShareContactToUser|null findOneBy(array $criteria, array $orderBy = null)
+ * @method ShareContactToUser[]    findAll()
+ * @method ShareContactToUser[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ShareNoteToUserRepository extends ServiceEntityRepository
+class ShareContactToUserRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ShareNoteToUser::class);
+        parent::__construct($registry, ShareContactToUser::class);
     }
 
     // /**
-    //  * @return ShareNoteToUser[] Returns an array of ShareNoteToUser objects
+    //  * @return ShareContactToUser[] Returns an array of ShareContactToUser objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class ShareNoteToUserRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?ShareNoteToUser
+    public function findOneBySomeField($value): ?ShareContactToUser
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.exampleField = :val')

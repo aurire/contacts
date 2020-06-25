@@ -2,13 +2,13 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Note;
+use App\Entity\Contact;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class NoteVoter extends Voter
+class ContactVoter extends Voter
 {
     private Security $security;
 
@@ -20,7 +20,7 @@ class NoteVoter extends Voter
     protected function supports($attribute, $subject)
     {
         return in_array($attribute, ['EDIT'])
-            && $subject instanceof Note;
+            && $subject instanceof Contact;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -32,7 +32,7 @@ class NoteVoter extends Voter
         }
 
         // ... (check conditions and return true to grant permission) ...
-        /** @var Note $subject */
+        /** @var Contact $subject */
         switch ($attribute) {
             case 'EDIT':
                 if ($subject->getOwner()->getId() === $user->getId()) {

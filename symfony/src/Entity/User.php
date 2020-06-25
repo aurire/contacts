@@ -20,18 +20,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ApiResource(
  *     collectionOperations={
  *         "get" = {
- *
- *
+ *             "security" = "is_granted('ROLE_USER')",
  *          },
  *         "post" = {
- *             "access_control" = "is_granted('ROLE_USER')",
+ *             "security" = "is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
  *             "validation_groups" = { "Default", "create"}
  *         }
  *
  *     },
  *     itemOperations={
  *         "get" = {
- *             "security" = "is_granted('IS_AUTHENTICATED_ANONYMOUSLY')",
+ *             "security" = "is_granted('ROLE_USER')",
  *             "normalization_context"={"groups"={"user:read", "user:item:get"}}
  *         },
  *         "put" = {"security" = "is_granted('ROLE_USER') and object == user"},
@@ -56,7 +55,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"user:read", "user:write", "notes:item:get", "notes:write"})
+     * @Groups({"user:read", "user:write", "contacts:item:get", "contacts:write"})
      * @Assert\NotBlank()
      * @Assert\Email()
      */
@@ -82,11 +81,11 @@ class User implements UserInterface
     private $plainPassword;
 
     /**
-     * @ORM\OneToMany(targetEntity=Note::class, mappedBy="owner", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Contact::class, mappedBy="owner", cascade={"persist"}, orphanRemoval=true)
      * @Groups({"user:read", "user:write"})
      * @Assert\Valid()
      */
-    private $notes;
+    private $contacts;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
@@ -96,14 +95,14 @@ class User implements UserInterface
 
     /**
      * @Groups({"user:read", "user:write"})
-     * @ORM\OneToMany(targetEntity=ShareNoteToUser::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=ShareContactToUser::class, mappedBy="user", orphanRemoval=true)
      */
-    private $sharedNotes;
+    private $sharedContacts;
 
     public function __construct()
     {
-        $this->notes = new ArrayCollection();
-        $this->sharedNotes = new ArrayCollection();
+        $this->contacts = new ArrayCollection();
+        $this->sharedContacts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -185,30 +184,30 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Note[]
+     * @return Collection|Contact[]
      */
-    public function getNotes(): Collection
+    public function getContacts(): Collection
     {
-        return $this->notes;
+        return $this->contacts;
     }
 
-    public function addNote(Note $note): self
+    public function addContact(Contact $contact): self
     {
-        if (!$this->notes->contains($note)) {
-            $this->notes[] = $note;
-            $note->setOwner($this);
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts[] = $contact;
+            $contact->setOwner($this);
         }
 
         return $this;
     }
 
-    public function removeNote(Note $note): self
+    public function removeContact(Contact $contact): self
     {
-        if ($this->notes->contains($note)) {
-            $this->notes->removeElement($note);
+        if ($this->contacts->contains($contact)) {
+            $this->contacts->removeElement($contact);
             // set the owning side to null (unless already changed)
-            if ($note->getOwner() === $this) {
-                $note->setOwner(null);
+            if ($contact->getOwner() === $this) {
+                $contact->setOwner(null);
             }
         }
 
@@ -243,30 +242,30 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|ShareNoteToUser[]
+     * @return Collection|ShareContactToUser[]
      */
-    public function getSharedNotes(): Collection
+    public function getSharedContacts(): Collection
     {
-        return $this->sharedNotes;
+        return $this->sharedContacts;
     }
 
-    public function addSharedNote(ShareNoteToUser $sharedNote): self
+    public function addSharedContact(ShareContactToUser $sharedContact): self
     {
-        if (!$this->sharedNotes->contains($sharedNote)) {
-            $this->sharedNotes[] = $sharedNote;
-            $sharedNote->setUser($this);
+        if (!$this->sharedContacts->contains($sharedContact)) {
+            $this->sharedContacts[] = $sharedContact;
+            $sharedContact->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeSharedNote(ShareNoteToUser $sharedNote): self
+    public function removeSharedContact(ShareContactToUser $sharedContact): self
     {
-        if ($this->sharedNotes->contains($sharedNote)) {
-            $this->sharedNotes->removeElement($sharedNote);
+        if ($this->sharedContacts->contains($sharedContact)) {
+            $this->sharedContacts->removeElement($sharedContact);
             // set the owning side to null (unless already changed)
-            if ($sharedNote->getUser() === $this) {
-                $sharedNote->setUser(null);
+            if ($sharedContact->getUser() === $this) {
+                $sharedContact->setUser(null);
             }
         }
 

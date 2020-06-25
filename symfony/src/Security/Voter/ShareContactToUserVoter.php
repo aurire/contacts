@@ -2,14 +2,14 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Note;
-use App\Entity\ShareNoteToUser;
+use App\Entity\Contact;
+use App\Entity\ShareContactToUser;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ShareNoteToUserVoter extends Voter
+class ShareContactToUserVoter extends Voter
 {
     private Security $security;
 
@@ -21,7 +21,7 @@ class ShareNoteToUserVoter extends Voter
     protected function supports($attribute, $subject)
     {
         return in_array($attribute, ['DELETE'])
-            && $subject instanceof ShareNoteToUser;
+            && $subject instanceof ShareContactToUser;
     }
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
@@ -33,10 +33,10 @@ class ShareNoteToUserVoter extends Voter
         }
 
         // ... (check conditions and return true to grant permission) ...
-        /** @var ShareNoteToUser $subject */
+        /** @var ShareContactToUser $subject */
         switch ($attribute) {
             case 'DELETE':
-                if ($subject->getNote()->getOwner() === $user) {
+                if ($subject->getContact()->getOwner() === $user) {
                     return true;
                 }
 

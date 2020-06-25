@@ -1,13 +1,11 @@
 import React from "react";
-import {Link} from "react-router-dom";
 import {withRouter} from "react-router";
 import {connect} from "react-redux";
 import {initiateRegister, setAlert} from "../actions";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
+import UnloggedNavigation from "../components/UnloggedNavigation";
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -43,7 +41,7 @@ class Register extends React.Component {
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (null !== this.props.userData) {
-            this.props.history.push('/user/notes/list/1');
+            this.props.history.push('/user/contacts/list/1');
         }
         if (true === this.props.loaded) {
             this.props.setAlert('Succesfuly registered');
@@ -71,16 +69,7 @@ class Register extends React.Component {
 
         return (
             <div>
-                <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
-                    <Navbar.Brand>Notes sharing</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto">
-                            <Nav.Link as={Link} to="/">Login</Nav.Link>
-                            <Nav.Link as={Link} disabled to="/register">Register</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
+                <UnloggedNavigation activeLink="register" />
                 <h1>Register</h1>
                 <Form>
                     {error}

@@ -24,7 +24,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-CMD composer install ; wait-for-it mysqla:3306 -- bin/console doctrine:migrations:migrate ;  php-fpm
+CMD composer install ; wait-for-it mysqlc:3306 -- bin/console doctrine:migrations:migrate ;  php-fpm
 
 EXPOSE 9000
 EXPOSE 9001

@@ -1,13 +1,11 @@
 import React from "react";
 import {withRouter} from "react-router";
-import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {initiateLogin, getUserData} from "../actions";
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
+import UnloggedNavigation from "../components/UnloggedNavigation";
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -50,7 +48,7 @@ class Login extends React.Component {
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.userData !== null) {
-            this.props.history.push('/user/notes/list/1');
+            this.props.history.push('/user/contacts/list/1');
         }
     }
 
@@ -83,16 +81,7 @@ class Login extends React.Component {
             <div>
                 {alert}
                 {error}
-                <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
-                    <Navbar.Brand>Notes sharing</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="mr-auto">
-                            <Nav.Link as={Link} disabled to="/">Login</Nav.Link>
-                            <Nav.Link as={Link} to="/register">Register</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
+                <UnloggedNavigation activeLink="login" />
                 <h1>Login</h1>
                 <Form>
                     <Form.Group>

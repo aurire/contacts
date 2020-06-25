@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Note;
+use App\Entity\Contact;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Note|null find($id, $lockMode = null, $lockVersion = null)
- * @method Note|null findOneBy(array $criteria, array $orderBy = null)
- * @method Note[]    findAll()
- * @method Note[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Contact|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Contact|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Contact[]    findAll()
+ * @method Contact[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class NoteRepository extends ServiceEntityRepository
+class ContactRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Note::class);
+        parent::__construct($registry, Contact::class);
     }
 
     // /**
-    //  * @return Note[] Returns an array of Note objects
+    //  * @return Contact[] Returns an array of Contact objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class NoteRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Note
+    public function findOneBySomeField($value): ?Contact
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.exampleField = :val')

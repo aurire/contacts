@@ -2,14 +2,14 @@ import React from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router";
 import {Link} from "react-router-dom";
-import {fetchNotesList, setAlert, deleteNote} from "../../../../actions";
+import {fetchContactList, setAlert, deleteContact} from "../../../../actions";
 import ListGroup from "react-bootstrap/ListGroup";
 import Pagination from "react-bootstrap/Pagination";
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        fetchNotesList: (owner, page) => dispatch(fetchNotesList(owner, page)),
-        deleteNote: (id) => dispatch(deleteNote(id)),
+        fetchContactList: (owner, page) => dispatch(fetchContactList(owner, page)),
+        deleteContact: (id) => dispatch(deleteContact(id)),
         setAlert: (msg) => dispatch(setAlert(msg))
     };
 };
@@ -18,7 +18,6 @@ const mapStateToProps = (state) => {
     return {...state};
 };
 
-//http://localhost/api/notes?page=1
 class List extends React.Component {
     constructor(props) {
         super(props);
@@ -29,15 +28,15 @@ class List extends React.Component {
     }
     onDeleteClick(event) {
         event.preventDefault();
-        this.props.deleteNote(event.target.dataset.id.split('/').pop());
+        this.props.deleteContact(event.target.dataset.id.split('/').pop());
     }
-    getNotes() {
-        if (this.props.notes[this.props.match.params.id]) {
-            let notes = this.props.notes[this.props.match.params.id]['hydra:member'];
+    getContacts() {
+        if (this.props.contacts[this.props.match.params.id]) {
+            let contacts = this.props.contacts[this.props.match.params.id]['hydra:member'];
 
-            const listItems = notes.map((note) =>
-              <ListGroup.Item key={note['@id']}>
-                  <h5>{note['title']} <span style={{fontWeight: "normal", fontSize: "small"}}>{
+            const listItems = contacts.map((contact) =>
+              <ListGroup.Item key={contact['@id']}>
+                  <h5>{contact['name']} <span style={{fontWeight: "normal", fontSize: "small"}}>{
                       new Intl.DateTimeFormat(
                           "en-GB",
                           {
@@ -48,14 +47,14 @@ class List extends React.Component {
                               minute: 'numeric',
                               second: 'numeric'
                           }
-                      ).format(new Date(note['createdAt']))
+                      ).format(new Date(contact['createdAt']))
                   }</span></h5>
-                  <p>{note['shortMessage']}</p>
-                  <Link to={"/user/notes/edit/" + note['@id'].split('/').pop()}>Edit Note</Link>
+                  <p>{contact['phone']}</p>
+                  <Link to={"/user/contacts/edit/" + contact['@id'].split('/').pop()}>Edit Contact</Link>
                   <span> | </span>
-                  <Link to={"/user/notes/share/" + note['@id'].split('/').pop()}>Share Note</Link>
+                  <Link to={"/user/contacts/share/" + contact['@id'].split('/').pop()}>Share Contact</Link>
                   <span> | </span>
-                  <a href="#" data-id={note['@id'].split('/').pop()} onClick={this.onDeleteClick} >Delete Note</a>
+                  <a href="#" data-id={contact['@id'].split('/').pop()} onClick={this.onDeleteClick} >Delete Contact</a>
               </ListGroup.Item>
             );
 
@@ -69,14 +68,14 @@ class List extends React.Component {
         return '';
     }
     getPager() {
-        if (this.props.notes[this.props.match.params.id]) {
-            let view = this.props.notes[this.props.match.params.id]['hydra:view'];
+        if (this.props.contacts[this.props.match.params.id]) {
+            let view = this.props.contacts[this.props.match.params.id]['hydra:view'];
             if (false === view['@id'].includes('page=')) {
                 return '';
             }
             const first = view['hydra:first']
                 ? <Pagination.First>
-                    <Link to={"/user/notes/list/" + view['hydra:first'].split('page=').pop()}>
+                    <Link to={"/user/contacts/list/" + view['hydra:first'].split('page=').pop()}>
                         First
                     </Link>
                 </Pagination.First>
@@ -86,7 +85,7 @@ class List extends React.Component {
             const next = view['hydra:next']
                 ? <>
                     <Pagination.Next>
-                        <Link to={"/user/notes/list/"
+                        <Link to={"/user/contacts/list/"
                         + view['hydra:next'].split('page=').pop()}>
                             Next
                         </Link>
@@ -99,7 +98,7 @@ class List extends React.Component {
                 ? <>
                     <Pagination.Ellipsis />
                     <Pagination.Prev>
-                        <Link to={"/user/notes/list/"
+                        <Link to={"/user/contacts/list/"
                             + view['hydra:previous'].split('page=').pop()}>
                             Previous
                         </Link>
@@ -109,7 +108,7 @@ class List extends React.Component {
             ;
             const last = view['hydra:last']
                 ? <Pagination.Last>
-                    <Link to={"/user/notes/list/" + view['hydra:last'].split('page=').pop()}>
+                    <Link to={"/user/contacts/list/" + view['hydra:last'].split('page=').pop()}>
                         Last
                     </Link>
                 </Pagination.Last>
@@ -140,24 +139,24 @@ class List extends React.Component {
             const pageId = pathParts.pop();
             const lastPart = pathParts.pop();
             const preLastPart = pathParts.pop();
-            if (preLastPart === 'notes' && lastPart === 'list') {
+            if (preLastPart === 'contacts' && lastPart === 'list') {
                 if (false === this.props.dataFetchFinished && false === this.props.loading) {
                     let user = null === this.props.user ? localStorage.getItem('user') : this.props.user;
-                    this.props.fetchNotesList(user, pageId);
+                    this.props.fetchContactList(user, pageId);
                 }
             }
         });
         if (false === this.props.dataFetchFinished && false === this.props.loading) {
             let user = null === this.props.user ? localStorage.getItem('user') : this.props.user;
-            this.props.fetchNotesList(user, this.props.match.params.id);
+            this.props.fetchContactList(user, this.props.match.params.id);
         }
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (Object.keys(this.props.deleted).length > 0) {
             let user = null === this.props.user ? localStorage.getItem('user') : this.props.user;
-            this.props.fetchNotesList(user, this.props.match.params.id);
-            if (this.state.msg !== "Note deleted succesfuly") {
-                this.setState({msg: "Note deleted succesfuly"});
+            this.props.fetchContactList(user, this.props.match.params.id);
+            if (this.state.msg !== "Contact deleted succesfuly") {
+                this.setState({msg: "Contact deleted succesfuly"});
             }
         }
     }
@@ -165,9 +164,9 @@ class List extends React.Component {
     render() {
         return (
             <div>
-                <h1>Your notes</h1>
+                <h1>Your Contacts</h1>
                 <p>{this.state.msg}</p>
-                {this.getNotes()}
+                {this.getContacts()}
                 {this.getPager()}
             </div>
         );

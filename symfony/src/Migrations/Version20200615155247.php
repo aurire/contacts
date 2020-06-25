@@ -22,9 +22,9 @@ final class Version20200615155247 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE note ADD owner_id INT NOT NULL');
-        $this->addSql('ALTER TABLE note ADD CONSTRAINT FK_CFBDFA147E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_CFBDFA147E3C61F9 ON note (owner_id)');
+        $this->addSql('ALTER TABLE contact ADD owner_id INT NOT NULL');
+        $this->addSql('ALTER TABLE contact ADD CONSTRAINT FK_CFBDFA147E3C61F9 FOREIGN KEY (owner_id) REFERENCES user (id)');
+        $this->addSql('CREATE INDEX IDX_CFBDFA147E3C61F9 ON contact (owner_id)');
     }
 
     public function down(Schema $schema) : void
@@ -32,8 +32,8 @@ final class Version20200615155247 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE note DROP FOREIGN KEY FK_CFBDFA147E3C61F9');
-        $this->addSql('DROP INDEX IDX_CFBDFA147E3C61F9 ON note');
-        $this->addSql('ALTER TABLE note DROP owner_id');
+        $this->addSql('ALTER TABLE contact DROP FOREIGN KEY FK_CFBDFA147E3C61F9');
+        $this->addSql('DROP INDEX IDX_CFBDFA147E3C61F9 ON contact');
+        $this->addSql('ALTER TABLE contact DROP owner_id');
     }
 }

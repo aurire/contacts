@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\NoteRepository;
+use App\Repository\ContactRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +14,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 use Symfony\Component\Validator\Constraints as Assert;
-// *             "security" = "is_granted('ROLE_USER')"
 /**
  * @ApiResource(
  *     collectionOperations={
@@ -27,33 +26,33 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     itemOperations={
  *         "get"={
- *             "normalization_context"={"groups"={"notes:read", "notes:item:get"}}
+ *             "normalization_context"={"groups"={"contacts:read", "contacts:item:get"}}
  *         },
  *         "put" = {
  *             "security" = "is_granted('EDIT', object)",
- *             "security_message" = "only creator can edit note"
+ *             "security_message" = "only creator can edit contact"
  *         },
- *         "delete" = { "security" = "is_granted('EDIT', object)", "security_message" = "only creator can delete note" }
+ *         "delete" = { "security" = "is_granted('EDIT', object)", "security_message" = "only creator can delete contact" }
  *     },
- *     normalizationContext={"groups"={"notes:read"}},
- *     denormalizationContext={"groups"={"notes:write"}},
+ *     normalizationContext={"groups"={"contacts:read"}},
+ *     denormalizationContext={"groups"={"contacts:write"}},
  *     attributes={
  *         "pagination_items_per_page"=5
  *     }
  * )
  *
- * @ORM\Entity(repositoryClass=NoteRepository::class)
+ * @ORM\Entity(repositoryClass=ContactRepository::class)
  * @ApiFilter(BooleanFilter::class, properties={"isPublic"})
- * @ApiFilter(SearchFilter::class, properties={"owner": "exact", "title": "partial", "message": "partial"})
+ * @ApiFilter(SearchFilter::class, properties={"owner": "exact", "name": "partial", "phone": "partial"})
  * @ApiFilter(PropertyFilter::class)
  */
-class Note
+class Contact
 {
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->noteShares = new ArrayCollection();
+        $this->contactShares = new ArrayCollection();
     }
 
     /**
@@ -65,19 +64,19 @@ class Note
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"notes:read", "notes:write", "user:read", "user:write", "share:read"})
+     * @Groups({"contacts:read", "contacts:write", "user:read", "user:write", "share:read"})
      * @Assert\NotBlank()
      * @Assert\Length(
      *     min=2,
      *     max=255,
-     *     maxMessage="Max title length is 255 characters"
+     *     maxMessage="Max name length is 255 characters"
      * )
      */
-    private $title;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"notes:read", "user:read", "share:read"})
+     * @Groups({"contacts:read", "user:read", "share:read"})
      * @Assert\NotBlank()
      * @Assert\Length(
      *     min=2,
@@ -85,79 +84,65 @@ class Note
      *     maxMessage="Max message length is 255 characters"
      * )
      */
-    private $message;
+    private $phone;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"notes:read", "user:read", "share:read"})
+     * @Groups({"contacts:read", "user:read", "share:read"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"notes:read", "notes:write", "user:write"})
+     * @Groups({"contacts:read", "contacts:write", "user:write"})
      */
     private $isPublic;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="notes")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="contacts")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"notes:read", "notes:write"})
+     * @Groups({"contacts:read", "contacts:write"})
      * @Assert\Valid()
      */
     private $owner;
 
     /**
-     * @ORM\OneToMany(targetEntity=ShareNoteToUser::class, mappedBy="note", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=ShareContactToUser::class, mappedBy="contact", orphanRemoval=true)
      */
-    private $noteShares;
+    private $contactShares;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getName(): ?string
     {
-        return $this->title;
+        return $this->name;
     }
 
-    public function setTitle(string $title): self
+    public function setName(string $name): self
     {
-        $this->title = $title;
+        $this->name = $name;
 
         return $this;
     }
 
-    public function getMessage(): ?string
+    /**
+     * @Groups("contacts:read")
+     */
+    public function getPhone(): ?string
     {
-        return $this->message;
+        return $this->phone;
     }
 
     /**
-     * @Groups("notes:read")
+     * @Groups({"contacts:write", "user:write"})
+     * @SerializedName("phone")
      */
-    public function getShortMessage(): ?string
+    public function setPhone($phone): void
     {
-        return strlen($this->message) < 40 ? $this->message : substr(strip_tags($this->message), 0, 40) . '...';
-    }
-
-    /**
-     * Raw text for the message
-     *
-     * @Groups({"notes:write", "user:write"})
-     * @SerializedName("message")
-     */
-    public function setTextMessage(?string $message): self
-    {
-        $this->message = nl2br($message);
-
-        return $this;
-    }
-
-    public function setMessage($message): void
-    {
-        $this->message = $message;
+        $this->phone = $phone;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface
@@ -190,30 +175,30 @@ class Note
     }
 
     /**
-     * @Groups({"notes:item:get"})
+     * @Groups({"contacts:item:get"})
      */
-    public function getNoteShares(): Collection
+    public function getContactShares(): Collection
     {
-        return $this->noteShares;
+        return $this->contactShares;
     }
 
-    public function addNoteShare(ShareNoteToUser $share): self
+    public function addContactShare(ShareContactToUser $share): self
     {
-        if (!$this->noteShares->contains($share)) {
-            $this->noteShares[] = $share;
-            $share->setNote($this);
+        if (!$this->contactShares->contains($share)) {
+            $this->contactShares[] = $share;
+            $share->setContact($this);
         }
 
         return $this;
     }
 
-    public function removeShare(ShareNoteToUser $share): self
+    public function removeShare(ShareContactToUser $share): self
     {
-        if ($this->noteShares->contains($share)) {
-            $this->noteShares->removeElement($share);
+        if ($this->contactShares->contains($share)) {
+            $this->contactShares->removeElement($share);
             // set the owning side to null (unless already changed)
-            if ($share->getNote() === $this) {
-                $share->setNote(null);
+            if ($share->getContact() === $this) {
+                $share->setContact(null);
             }
         }
 

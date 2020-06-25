@@ -1,12 +1,12 @@
 import React from "react";
 import {connect} from 'react-redux';
-import {initiateNoteShare, setAlert, fetchByEmail} from "../../../../actions";
+import {initiateContactShare, setAlert, fetchByEmail} from "../../../../actions";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        initiateNoteShare: (note, user) => dispatch(initiateNoteShare(note, user)),
+        initiateContactShare: (contact, user) => dispatch(initiateContactShare(contact, user)),
         setAlert: (msg) => dispatch(setAlert(msg)),
         fetchByEmail: (email, page) => dispatch(fetchByEmail(email, page))
     };
@@ -16,7 +16,7 @@ const mapStateToProps = (state) => {
     return {...state};
 };
 
-class NotesShare extends React.Component {
+class ContactsShare extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -42,8 +42,8 @@ class NotesShare extends React.Component {
     }
     handleShareSubmit(event) {
         event.preventDefault();
-        this.props.initiateNoteShare(
-            "/api/notes/" + this.props.match.params.id,
+        this.props.initiateContactShare(
+            "/api/contacts/" + this.props.match.params.id,
             this.state.userid
         );
 
@@ -52,8 +52,8 @@ class NotesShare extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (true === this.props.loaded) {
             if (true === this.props.mainActionFinished) {
-                this.props.setAlert('Note shared succesfuly');
-                this.props.history.push('/user/');
+                this.props.setAlert('Contact shared succesfuly');
+                this.props.history.push('/user/contacts/list/1');
             }
         }
     }
@@ -71,7 +71,7 @@ class NotesShare extends React.Component {
                 this.props.error.response
                 && this.props.error.response.data
             ) {
-                error = <p>{this.props.error.response.data['hydra:description'].replace(/^note\:\s/, "")}</p>
+                error = <p>{this.props.error.response.data['hydra:description'].replace(/^contact\:\s/, "")}</p>
             } else {
                 error = <p>{this.props.error.message}</p>
             }
@@ -84,7 +84,7 @@ class NotesShare extends React.Component {
                         <Form.Label>Search by user email</Form.Label>
                         <Form.Control onChange={this.handleChange} value={this.state.title} type="text" placeholder="Enter user email" name="user" id="user" />
                         <Form.Text className="text-muted">
-                            Enter at least the portion of email you want to share a note with
+                            Enter at least the portion of email you want to share a contact with
                         </Form.Text>
                     </Form.Group>
                     <Button variant="primary" type="submit">Search</Button>
@@ -97,13 +97,7 @@ class NotesShare extends React.Component {
         if (this.props.search[this.state.user]) {
             let res = this.props.search[this.state.user][1]['hydra:member'];
 
-            var results = res.filter(function(result) {
-                if (result.isMe) {
-                    return false;
-                }
-                return true;
-            });
-            results = results.map(function(result) {
+            const results = res.map(function(result) {
 
                 return <option value={result['@id']} key={result['@id']}>{result.email}</option>;
             });
@@ -116,7 +110,7 @@ class NotesShare extends React.Component {
                             {results}
                         </Form.Control>
                         <Form.Text className="text-muted">
-                            Select specific user by email you want to share a note with
+                            Select specific user by email you want to share a contact with
                         </Form.Text>
                     </Form.Group>
                     <Button variant="primary" type="submit">Share</Button>
@@ -129,7 +123,7 @@ class NotesShare extends React.Component {
     render() {
         return (
             <div>
-                <h1>Share a note</h1>
+                <h1>Share a contact</h1>
                 {this.getForm()}
                 {this.getResults()}
             </div>
@@ -137,5 +131,5 @@ class NotesShare extends React.Component {
     }
 }
 
-const ConnectedNotesShare = connect(mapStateToProps, mapDispatchToProps)(NotesShare);
-export default ConnectedNotesShare;
+const ConnectedContactsShare = connect(mapStateToProps, mapDispatchToProps)(ContactsShare);
+export default ConnectedContactsShare;
