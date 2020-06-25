@@ -1,0 +1,8 @@
+index:
+    path: /
+    controller: App\Controller\FrontController::index
+api_wildcard:
+    path:  /{wildcard}
+    controller: App\Controller\FrontController::index
+    requirements:
+        wildcard: ^(?!api).*$
