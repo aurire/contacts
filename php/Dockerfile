@@ -1,6 +1,7 @@
 ARG PHP_VERSION=""
 FROM php:${PHP_VERSION:+${PHP_VERSION}-}fpm-alpine
-COPY wait-for-it.sh /usr/bin/wait-for-it
+
+COPY ./php/wait-for-it.sh /usr/bin/wait-for-it
 
 RUN chmod +x /usr/bin/wait-for-it
 
@@ -22,9 +23,11 @@ RUN docker-php-ext-install pdo_mysql
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+COPY --from=nodec /usr/app/phonebook.rekstys.lt/build/index.html /var/www/html/phonebook.rekstys.lt/symfony/templates/base.html.twig
+
 WORKDIR /var/www/html
 
-CMD composer install ; wait-for-it mysqlc:3306 -- bin/console doctrine:migrations:migrate ;  php-fpm
+CMD composer install ; wait-for-it mysqlc:3306 -- phonebook.rekstys.lt/symfony/bin/console doctrine:migrations:migrate ;  php-fpm
 
 EXPOSE 9000
-EXPOSE 9001
+#EXPOSE 9001
