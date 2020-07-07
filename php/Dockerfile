@@ -27,7 +27,7 @@ COPY --from=nodec /usr/app/phonebook.rekstys.lt/build/index.html /var/www/html/p
 
 WORKDIR /var/www/html/phonebook.rekstys.lt/symfony
 
-CMD composer install ; wait-for-it mysqlc:3306 -- phonebook.rekstys.lt/symfony/bin/console doctrine:migrations:migrate ;  php-fpm
+CMD composer install ; wait-for-it mysqlc:3306 -- bin/console doctrine:migrations:migrate ;  php-fpm
 
 EXPOSE 9000
 #EXPOSE 9001
