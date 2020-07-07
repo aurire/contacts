@@ -1,4 +1,4 @@
 /.idea
 vendor
 /front/node_modules
-.env
+.env.prod
