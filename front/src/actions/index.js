@@ -44,7 +44,7 @@ import {
 } from "../constants/actionTypes";
 import axios from "axios";
 
-const HOST = 'http://localhost/';
+const HOST = 'http://phonebook.rekstys.lt/';
 
 //getUserData
 export const getUserData = (id) => {
