@@ -1,4 +1,4 @@
-export const BASE_URL = process.env.NODE_ENV === "prod" || process.env.NODE_ENV === "production"
+export const BASE_URL = "production" === process.env.NODE_ENV
     ? 'http://phonebook.rekstys.lt/'
     : 'http://localhost/'
 ;
